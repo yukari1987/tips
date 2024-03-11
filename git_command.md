@@ -20,12 +20,14 @@ git init
 
 //ステージングを上げ待ち状態にする
 git add .
+//ステージにあるファイルをリスト化
+git ls-files --stage
 
 //コミットメッセージを入力
 git commit -m
 
 //ブランチの名前をmainに変更
-git -M main
+git branch -M main
 
 //接続する
 git remote 接続コード(GitHubから取得)
