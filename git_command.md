@@ -22,9 +22,11 @@ git init
 git add .
 //ステージにあるファイルをリスト化
 git ls-files --stage
+//ステータスを確認
+git status
 
 //コミットメッセージを入力
-git commit -m
+git commit -m "メッセージ"
 
 //ブランチの名前をmainに変更
 git branch -M main
