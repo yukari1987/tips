@@ -30,7 +30,7 @@ git commit -m
 git branch -M main
 
 //接続する
-git remote 接続コード(GitHubから取得)
+git remote add origin 接続コード(GitHubから取得)
 
 //プッシュ
 git push -u origin main
@@ -48,3 +48,9 @@ origin アドレス.git
 
 //新しいURLに変更
 git remote set-url origin 新しいURL
+```
+
+#リモートリポジトリの変更を取得
+```
+git pull リモート名 ブランチ名
+```
