@@ -22,7 +22,7 @@ git init
 git add .
 //ステージにあるファイルをリスト化
 git ls-files --stage
-//ステータスを確認
+//git全体を確認
 git status
 
 //コミットメッセージを入力
