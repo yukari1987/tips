@@ -1,0 +1,24 @@
+
+@charset "UTF-8";
+
+// 初期設定
+html, body, h1, h2, h3, h4, p, ul, ol, li, dl, dt, dd, figure{
+  margin:0;
+  padding:0;
+  line-height:1.3;
+}
+ul, ol{
+  list-style:none;
+}
+a{
+  text-decoration:none;
+  &.anchor{
+    display:block;
+    padding-top:70px;
+    margin-top:-70px;
+  }
+}
+
+html{
+  font-size: 62.5%;
+}
