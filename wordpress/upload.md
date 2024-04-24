@@ -2,7 +2,8 @@
 ```
 //コマンドを開く
 //cdでdockerで開いているファイルへ移動
-docker compose exev コンテナ名 bash
+//*コンテナ名の確認方法は？
+docker compose exec コンテナ名 bash
 
 //パブリックが表示される（var/www/html #）
 tar czfv ファイル名.tar.gz *
