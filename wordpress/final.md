@@ -3,10 +3,12 @@
 ##実機確認（iphone/android）<br><br>
 ##テスト記事が入っていないか<br><br>
 ##htmlの構文確認<br>
-https://validator.w3.org/#validate_by_input+with_options<br><br>
+(https://validator.w3.org/#validate_by_input+with_options)<br><br>
 ##wpのユーザーは適切か<br><br>
 ##sitemap確認<br>
-/wp-sitemap.xml<br><br>
+```
+/wp-sitemap.xml
+```
 ##フォームのメール送信先は合っているか。送信テストをする<br><br>
 ##OGPの確認
 ```
@@ -29,25 +31,29 @@ https://validator.w3.org/#validate_by_input+with_options<br><br>
 //画像の設定(1200 / 630)
 <meta property="og:image" content="<?= get_theme_file_uri('/img/ogp.jpg'); ?>" />
 ```
-<br>
+
 ##ogp確認ツール<br>
-https://rakko.tools/tools/9/<br><br>
+(https://rakko.tools/tools/9/)<br><br>
+
 ##検索エンジンでの表示確認
 ```
 設定→表示設定→検索エンジンでの表示→検索エンジンがサイトをインデックスしないようにする
 のチェックを外す
 ```
 <br>
+
 ##googleアナリティクス設定
 ```
 ページの閲覧数や国など解析できる。
 ```
-<br>
+
+
 ##google Search Console設定
 ```
 chromeにサイトの状況を伝える。
 検索ワード、順位を確認できる。
 ```
+
 ##Google reCaptcha設定
 ```
 スパムメールのブロック。バージョンはv3に設定する。
