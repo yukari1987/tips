@@ -64,6 +64,8 @@ DSN設定が必要。
 googleアカウントからサイトごとに登録。
 設定が完了するまで１日ほどかかるので後日再確認する必要がある。
 ```
+##Google SEO対策マニュアル<br>
+(https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=ja)
 
 ##SSLリダイレクト設定
 ```
