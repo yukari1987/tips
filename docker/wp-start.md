@@ -1,4 +1,4 @@
-# docker-compose.ymlを作成
+## docker-compose.ymlを作成
 ```
 //Compose fileのバージョン
 version: '3'
@@ -25,6 +25,12 @@ services:
     ports:
       - 8081:80
 ```
+
+## phpmyadminに接続し設定を変更
+・wp-optionsのsiteurl,homeをhttp://localhost:3000/に変更
+・wordpressのユーザー名、パスワードを入手できない場合は、wp-usersのユーザー名とパスワード（ハッシュ化必要）を追加
+・wp-config.phpのデータベース名・ユーザー名・パスワードの設定を確認
+
 
 ## イメージとは
 ```
