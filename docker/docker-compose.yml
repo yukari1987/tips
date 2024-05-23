@@ -1,0 +1,56 @@
+# Dockerでwordpressを立ち上げたい場合のテンプレート
+
+version: "3.7"
+services:
+  mysql:
+    # container_name: mysql
+    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
+    image: mysql:5.7
+    volumes:
+      - mysql:/var/lib/mysql
+      # - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\db:/var/lib/mysql
+      # 仮想的なvolumeではなく物理的なファイルで情報を残したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
+      - ./db_entrypoint:/docker-entrypoint-initdb.d
+      # mysqlの初期値をimportしたい場合はコメントアウトを外す
+    environment:
+      MYSQL_ROOT_PASSWORD: パスワード
+      MYSQL_DATABASE: データベース名
+  wordpress:
+    # container_name: wordpress
+    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
+    # build: ./
+    image: wordpress:latest
+    volumes:
+      - ./:/var/www/html
+    #   - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\wp:/var/www/html/wp-content
+    # ファイルを編集したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
+    depends_on:
+      - mysql
+    ports:
+      - 3000:80
+    environment:
+      WORDPRESS_DB_NAME: ワードプレスのデータベース名
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DB_PASSWORD: ワードプレスのデータベースパスワード
+  phpmyadmin:
+    # container_name: phpmyadmin
+    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
+    image: phpmyadmin:latest
+    depends_on:
+      - mysql
+    ports:
+      - 4000:80
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: phpmyadminのパスワード
+      # インポートするSQLのファイルサイズが大きい場合、コメントアウトを外す
+      # MEMORY_LIMIT: 128M
+      # UPLOAD_LIMIT: 64M
+volumes:
+  mysql:
+  wordpress:
+# 新規に作るのではなく環境をコピーする場合以下の内いずれかを実行する
+# docker compose exec wordpress bash -c "chown -R www-data:www-data /var/www/html"
+# docker compose exec wordpress bash -c "chown -R www-data:www-data /var/www/html/wp-content/upgrade && chown -R www-data:www-data /var/www/html/wp-content/uploads && chown -R www-data:www-data /var/www/html/wp-content/plugins"

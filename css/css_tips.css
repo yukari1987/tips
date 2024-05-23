@@ -1,0 +1,36 @@
+/* グラデーションを使ったテキストアニメーション */
+p{
+  color :rgba(0 0 0 / 0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(-);
+  background-repeat: no-repeat;
+  background-size: 400% 400%;
+  animation: texGradient 9s ease infinite;
+}
+
+/* テキスト縁取り */
+p{
+  color: rgba(0 0 0 / 0);
+  -webkit-text-stroke: 1px #111;
+  text-stroke: 1px #111;
+}
+
+/* テキストが横にループする */
+p{
+  animation: textloop 40s infinite liner;
+  white-space: nowrap;
+}
+@keyframes textloop {
+  0%{
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(-100%);
+  }
+}
+
+/* 以上SNSより　小林さん x:pulpxstyle */
+
+/* CSSいろいろ */
+/* https://photoshopvip.net/157774 */
