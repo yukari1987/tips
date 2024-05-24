@@ -1,3 +1,13 @@
+## コンテナにするフォルダを作成
+## マウントするフォルダを作成し、データがあれば入れる
+```
+以下のymlファイルをコピペする場合、
+・「wp」「db_entrypoint(の中にインポートするsql)」が必要
+```
+## db_entrypointフォルダの中にdockerfileを作成
+```
+詳細調べ中
+```
 ## docker-compose.ymlを作成
 ```
 //Compose fileのバージョン
@@ -12,6 +22,7 @@ services:
       # - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\db:/var/lib/mysql
       # 仮想的なvolumeではなく物理的なファイルで情報を残したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
       - ./db_entrypoint:/docker-entrypoint-initdb.d
+      # db_entrypointフォルダをdocker-entrypoint-initdb.dにマウントすることでインポートできる
     environment:
       MYSQL_ROOT_PASSWORD: パスワード
       MYSQL_DATABASE: wordpress      
@@ -102,10 +113,10 @@ www-data:www-data
 ・消すときは、コンテナの他に「images」「volumes」からも関連の名前のものを消す <br>
 ・初回起動時に、キャッシュのない「シークレットモードブラウザ」で開く。
 
-## phpmyadminに接続し設定を変更
+<!-- ## phpmyadminに接続し設定を変更
 ・wp-optionsのsiteurl,homeをhttp://localhost:3000/に変更 <br>
 ・wordpressのユーザー名、パスワードを入手できない場合は、wp-usersのユーザー名とパスワード（ハッシュ化必要）を追加 <br>
-・wp-config.phpのデータベース名・ユーザー名・パスワードの設定を確認
+・wp-config.phpのデータベース名・ユーザー名・パスワードの設定を確認 -->
 
 
 ## イメージとは
