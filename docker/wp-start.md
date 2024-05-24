@@ -5,9 +5,50 @@
 ・「wp」「db_entrypoint(の中にインポートするsql)」が必要
 ```
 ## db_entrypointフォルダの中にdockerfileを作成
+コマンドの概要についてはこちら ./docker-file.md
 ```
-詳細調べ中
+# FROM wordpress:php7.4-apache
+
+FROM wordpress:latest
+# 最新版をインストールしたいときはコメントアウトを外す FROMが重複するためphp7.4-apacheはコメントアウトする
+
+# apt-get updateを実行してパッケージリストを更新し、vim、iputils-ping、iproute2をインストール。これにより、コンテナ内でテキストエディタ、pingコマンド、ネットワーク管理ツールが使用できる
+
+RUN apt-get update -y \
+    && apt-get install -y vim iputils-ping iproute2
+
+# ~/.bashrcファイルにalias ll="ls -la"を追記しています。これにより、llコマンドでls -laと同等の動作が行われる
+
+RUN echo 'alias ll="ls -la"' >> ~/.bashrc
+
+# /usr/local/etc/php/php.iniファイルを作成しています。このファイルは、PHPの設定を行うために使用
+
+RUN touch /usr/local/etc/php/php.ini
+
+# /usr/local/etc/php/php.iniファイルにXdebugの設定を追記しています。この設定により、Xdebugがデバッグモードで動作し、ホストマシンのIPアドレスを使用して通信を行う。
+
+RUN echo "[xdebug]\n \
+xdebug.mode=debug\n \
+xdebug.client_host=host.docker.internal\n \
+xdebug.start_with_request=yes\n \
+xdebug.client_port=9003" >> /usr/local/etc/php/php.ini
+
+
+# RUN pecl install xdebug-3.1.6 \
+#     && docker-php-ext-enable xdebug
+# wordpress:latestを指定したらこっち
+
+RUN pecl install xdebug-3.3.1 \
+    && docker-php-ext-enable xdebug
+# COPY ./wordpress-6.3.2/ /var/www/html
+# phpは7.4を使いたいがwordpressは任意のバージョンを使いたい時用の記述
+
+# ./content/wp-content.tar.gzファイルを/var/www/html/ディレクトリに展開しています。これにより、WordPressのwp-contentディレクトリが追加
+
+ADD ./content/wp-content.tar.gz /var/www/html/
 ```
+
+
 ## docker-compose.ymlを作成
 ```
 //Compose fileのバージョン
