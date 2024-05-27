@@ -153,6 +153,8 @@ www-data:www-data
 ・うまくいかなかったり、開発が終われば、コンテナは割と頻繁に消すものと思ってよい。手軽に再構築できるのがDockerの良さ。<br>
 ・消すときは、コンテナの他に「images」「volumes」からも関連の名前のものを消す <br>
 ・初回起動時に、キャッシュのない「シークレットモードブラウザ」で開く。
+・.htaccessの名前を変えて無効化する
+・wp-optionsテーブル（管理画面からも変更可）のサイトアドレスを変える
 
 <!-- ## phpmyadminに接続し設定を変更
 ・wp-optionsのsiteurl,homeをhttp://localhost:3000/に変更 <br>
