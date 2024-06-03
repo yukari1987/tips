@@ -1,6 +1,6 @@
-#ウィジェット
+# ウィジェット
 
-##ウィジェットを管理画面に表示させる
+## ウィジェットを管理画面に表示させる
 ```
 //function.php
 function mytheme_widgets(){
@@ -10,9 +10,7 @@ function mytheme_widgets(){
 add_action('widgets_init','mytheme_widgets');
 ```
 
-##管理画面から外観->ウィジェットを選択
-
-#プロフィール
+## 管理画面から外観->ウィジェットを選択
 ```
 //sidebar.php
 //テーマfolder内のファイルのURLを出力

@@ -64,6 +64,18 @@ DSN設定が必要。
 スパムメールのブロック。バージョンはv3に設定する。
 googleアカウントからサイトごとに登録。
 設定が完了するまで１日ほどかかるので後日再確認する必要がある。
+
+reCAPCHAをformのあるページ以外に表示させないために以下のコードをfunction.phpに追加
+
+//reCHAPCHA読み込み禁止
+add_action( 'wp_enqueue_scripts', function() {
+	if( !is_page('ページのスラッグ') ){
+wp_dequeue_style( 'contact-form-7' );
+wp_deregister_script( 'contact-form-7' );
+wp_deregister_script( 'google-recaptcha' );
+wp_deregister_script( 'google-invisible-recaptcha' );
+}
+}, 100, 0);
 ```
 ## Google SEO対策マニュアル<br>
 (https://developers.google.com/search/docs/fundamentals/seo-starter-guide?hl=ja)
