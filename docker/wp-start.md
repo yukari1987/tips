@@ -1,10 +1,22 @@
 ## コンテナにするフォルダを作成
-## マウントするフォルダを作成し、データがあれば入れる
+### 構成
 ```
-以下のymlファイルをコピペする場合、
-・「wp」「db_entrypoint(の中にインポートするsql)」が必要
+プロジェクトフォルダ
+  ∟ db_entypoint (*)
+    - sql.sql
+    ∟ dockerfile
+      - .dockerfile(**)
+  ∟ wp-admin
+  ∟ wp-content
+  ∟ wp-includes
+  - docker-compose.yml(***)
+  - index.php
+  - wp-***.php
+  ...
 ```
-## db_entrypointフォルダの中にdockerfileを作成
+
+## (*)(**)db_entrypointフォルダの中にdockerfileを作成
+以下をコピペ。PHPの詳細設定。<br>
 コマンドの概要についてはこちら ./docker-file.md
 ```
 # FROM wordpress:php7.4-apache
@@ -49,7 +61,7 @@ ADD ./content/wp-content.tar.gz /var/www/html/
 ```
 
 
-## docker-compose.ymlを作成
+## (***)docker-compose.ymlを作成
 ```
 //Compose fileのバージョン
 version: '3.7'
@@ -164,7 +176,7 @@ www-data:www-data
 
 ## イメージとは
 ```
-Dockerの文脈で言うと「コンテナイメージ」と言われ、コンテナを起動するために必要な一式が格納されているファイルのことを指します。
+Dockerの文脈で言うと「コンテナイメージ」と言われ、コンテナを起動するために必要な一式が格納されているファイルのこと。通常はGitHub上にある公式データを参照する。独自に設定したい場合はdockerfileでイメージをつくる。
 ・OSの基盤となるファイル（多くの場合Linux distribusion）
 ・アプリケーションコード
 ・実行に必要なライブラリ（言語）
