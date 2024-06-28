@@ -1,0 +1,80 @@
+# WordPress Core
+/wp-admin/
+/wp-includes/
+/wp-content/index.php
+/wp-content/languages
+/wp-content/plugins/index.php
+/wp-content/themes/index.php
+/index.php
+/license.txt
+/readme.html
+/wp-*.php
+/xmlrpc.php
+
+#sql
+/db_entrypoint/
+
+# Configuration
+wp-config.php
+
+# Log files
+*.log
+
+# htaccess
+/.htaccess
+
+# Uploads
+/wp-content/uploads/
+
+# Plugins
+/wp-content/plugins/
+
+# Themes
+## 全てのテーマを無視しつつ、特定のThemeをバージョン管理
+/wp-content/themes/*
+!/wp-content/themes/テーマ名/
+
+# Cache files
+/wp-content/cache/
+/wp-content/backups/
+
+# Misc
+/sitemap.xml
+/sitemap.xml.gz
+
+# Packages and dependencies
+/vendor/
+/node_modules/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE and editor folders
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Compiled files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Temporary files
+/wp-content/ai1wm-backups/
