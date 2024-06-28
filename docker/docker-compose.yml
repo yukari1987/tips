@@ -18,8 +18,8 @@ services:
   wordpress:
     # container_name: wordpress
     # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
-    # build: ./
-    image: wordpress:latest
+    build: ./
+    # image: wordpress:latest
     volumes:
       - ./:/var/www/html
     #   - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\wp:/var/www/html/wp-content

@@ -4,116 +4,23 @@
 プロジェクトフォルダ
   ∟ db_entypoint (*)
     - sql.sql
-    ∟ dockerfile
-      - .dockerfile(**)
   ∟ wp-admin
   ∟ wp-content
   ∟ wp-includes
+  - Dockerfile(**)
   - docker-compose.yml(***)
   - index.php
   - wp-***.php
   ...
 ```
 
-## (*)(**)db_entrypointフォルダの中にdockerfileを作成
-以下をコピペ。PHPの詳細設定。<br>
-コマンドの概要についてはこちら ./docker-file.md
-```
-# FROM wordpress:php7.4-apache
+## (*)db_entrypointフォルダの中にインポートしたいSQLを入れる
 
-FROM wordpress:latest
-# 最新版をインストールしたいときはコメントアウトを外す FROMが重複するためphp7.4-apacheはコメントアウトする
-
-# apt-get updateを実行してパッケージリストを更新し、vim、iputils-ping、iproute2をインストール。これにより、コンテナ内でテキストエディタ、pingコマンド、ネットワーク管理ツールが使用できる
-
-RUN apt-get update -y \
-    && apt-get install -y vim iputils-ping iproute2
-
-# ~/.bashrcファイルにalias ll="ls -la"を追記しています。これにより、llコマンドでls -laと同等の動作が行われる
-
-RUN echo 'alias ll="ls -la"' >> ~/.bashrc
-
-# /usr/local/etc/php/php.iniファイルを作成しています。このファイルは、PHPの設定を行うために使用
-
-RUN touch /usr/local/etc/php/php.ini
-
-# /usr/local/etc/php/php.iniファイルにXdebugの設定を追記しています。この設定により、Xdebugがデバッグモードで動作し、ホストマシンのIPアドレスを使用して通信を行う。
-
-RUN echo "[xdebug]\n \
-xdebug.mode=debug\n \
-xdebug.client_host=host.docker.internal\n \
-xdebug.start_with_request=yes\n \
-xdebug.client_port=9003" >> /usr/local/etc/php/php.ini
-
-
-# RUN pecl install xdebug-3.1.6 \
-#     && docker-php-ext-enable xdebug
-# wordpress:latestを指定したらこっち
-
-RUN pecl install xdebug-3.3.1 \
-    && docker-php-ext-enable xdebug
-# COPY ./wordpress-6.3.2/ /var/www/html
-# phpは7.4を使いたいがwordpressは任意のバージョンを使いたい時用の記述
-
-# ./content/wp-content.tar.gzファイルを/var/www/html/ディレクトリに展開しています。これにより、WordPressのwp-contentディレクトリが追加
-
-ADD ./content/wp-content.tar.gz /var/www/html/
-```
-
+## (**)Dockerfileの作成
+[概要](./docker-file.md)
 
 ## (***)docker-compose.ymlを作成
-```
-//Compose fileのバージョン
-version: '3.7'
-
-services:
-  # 利用するイメージを追加
-  mysql:
-    image: mysql:5.7
-    volumes:
-      - mysql:/var/lib/mysql
-      # - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\db:/var/lib/mysql
-      # 仮想的なvolumeではなく物理的なファイルで情報を残したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
-      - ./db_entrypoint:/docker-entrypoint-initdb.d
-      # db_entrypointフォルダをdocker-entrypoint-initdb.dにマウントすることでインポートできる
-    environment:
-      MYSQL_ROOT_PASSWORD: パスワード
-      MYSQL_DATABASE: wordpress      
-  wordpress:
-    #WordPressの公式イメージ(DockerHubにアップロードされているWP公式のDockerイメージ)
-    #image: wordpress:latest
-    build: ./wp
-    volumes:
-      - wordpress:/var/www/html
-    #   - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\wp:/var/www/html/wp-content
-    # ファイルを編集したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
-    depends_on:
-      - mysql
-    ports:
-      - 3000:80
-    environment:
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_HOST: mysql:3306
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: パスワード
-
-  phpmyadmin:
-    # container_name: phpmyadmin
-    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
-    #DockerHub公式のphpmyadminイメージ
-    image: phpmyadmin:latest
-    depends_on:
-      - mysql
-    ports:
-      - 4000:80
-    environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: パスワード
-volumes:
-  mysql:
-  wordpress:
-```
+[概要](./docker-compose.yml)
 ## 初回起動時のコマンド
 ```
 1. 「コマンドプロンプト」からフォルダへ移動し次のコマンドを実行

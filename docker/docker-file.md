@@ -46,10 +46,10 @@
 FROM wordpress:latest
 # 最新版をインストールしたいときはコメントアウトを外す FROMが重複するためphp7.4-apacheはコメントアウトする
 
-# apt-get updateを実行してパッケージリストを更新し、vim、iputils-ping、iproute2をインストール。これにより、コンテナ内でテキストエディタ、pingコマンド、ネットワーク管理ツールが使用できる
+# apt-get updateを実行してパッケージリストを更新し、vim、iputils-ping、iproute2をインストール。これにより、コンテナ内でテキストエディタ、pingコマンド、ネットワーク管理ツール、gitが使用できる
 
 RUN apt-get update -y \
-    && apt-get install -y vim iputils-ping iproute2
+    && apt-get install -y vim iputils-ping iproute2 git
 
 # ~/.bashrcファイルにalias ll="ls -la"を追記しています。これにより、llコマンドでls -laと同等の動作が行われる
 
