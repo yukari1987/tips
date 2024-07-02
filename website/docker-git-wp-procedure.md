@@ -13,11 +13,11 @@
   ∟ wp-admin
   ∟ wp-content
   ∟ wp-includes
-  - Dockerfile(**)
-  - docker-compose.yml(***)
-  - .gitignore(****)
-  - index.php
-  - wp-***.php
+  Dockerfile(**)
+  docker-compose.yml(***)
+  .gitignore(****)
+  index.php
+  wp-***.php
   ...
 ```
 
@@ -31,6 +31,7 @@
 
 ## (****).gitignoreを作成
 [こちらをコピー](../git/.gitignore)
+35行目のテーマ名を直す
 
 ## dockerでWordPressを立ち上げる
 1. コマンドプロンプトからプロジェクトフォルダへ移動（docker-compose.ymlファイルがあるところ）
@@ -66,56 +67,36 @@ cat /root/.ssh/id_ed25519.pub
 8. GitHubのアカウント全体のSettings画面に移動し、「SSH and GPG keys」を選択
 8. 「New SSH key」から任意のタイトルと、さきほどの公開鍵をコピーし登録
 8. pushする
-8. gitの操作については[こちらを参照](../git/git_command.md)
+8. gitの詳しい操作方法については[こちらを参照](../git/git_command.md)
 
+## GitHub上に置いてはいけないデータについて
+1. データベースの中身(SQLファイル)<br>
+1. wp-config.php<br>
+※GitHubに機密情報は載せてはいけないため。<br>
+※上記の.gitignore内ではアップロードしないように指定済
 
+## GitHubを確認
+privateになっているか等確認
 
-以下編集中
-## 初回起動時のコマンド
+## サーバー側からGitHubに接続しクローンする
+1. RLoginでサーバーに接続
+1. クローンしたいフォルダに移動
+1. SSHキーを発行
 ```
-1. 「コマンドプロンプト」からフォルダへ移動し次のコマンドを実行
-2. docker compose exec wordpress(コンテナ名) bash
-3. bashで仮想環境に入り、root****/var/www/html#と表示される
-4. llコマンドで一覧表示
-5. -rw-r--r--  1 www-data www-data   405 Feb  6  2020 index.phpなど表示されるので、www-dataではないファイルまたはフォルダがないか確認
-6. もしwww-dataではないものがあれば現在の権限で操作できないので、次のコマンドで権限を変更する
-7. chown -R www-data:www-data フォルダ名１ フォルダ名２
-8.これで権限の変更が完了し、大体表示がうまくいく
+ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
-### コマンドの解説 5 llで表示された文字列の意味
+4. SSHキーを表示
 ```
-5. -rw-r--r--  1 www-data www-data   405 Feb  6  2020 index.php
-
--rw-r--r--(権限)
-・一番左がdの場合ディレクトリ、-の場合ファイルであることを明示
-・rwxrwxrwx r読み、w書き、x実行の権限があれば表示、なければ-。所有者の権限、所有グループの権限、その他ユーザーの権限の順。
-
-1(ハードリンク数)
-・通常は１
-
-www-data(ファイルの所有者)
-・www-dataは、Debian系のLinuxディストリビューション(UbuntuやDebian等)におけるApacheウェブサーバーのデフォルトユーザー。Apacheウェブサーバーは、セキュリティ上の理由から、rootユーザーではなく、制限された権限を持つ専用のユーザーとグループで実行され、その専用ユーザーがwww-data。
-
-www-data(ファイルの所有グループ)
-・www-dataは上記と同じく、デフォルトのグループ。グループとは、Unix系のユーザー管理の概念のひとつで、複数のユーザーをまとめる際に使用される。
-
-405(ファイルサイズのバイト)
-
-Feb  6  2020(最終更新日)
-
-index.php(ファイル名)
+cat /root/.ssh/id_ed25519.pub
 ```
-### コマンドの解説 7 権限の変更コマンド
+5. GitHubにSSHキーを登録
+6. クローンする
 ```
-chown
-・チェンジオーナー
-
--R
-・recursive。最後に指定するフォルダの中身全てを含む。このコマンドがないと外側のフォルダだけの権限変更となってしまう。
-
-www-data:www-data
-・新しい所有者:新しいグループ
+git clone git@github.com:ユーザー名/リポジトリ名.git .
 ```
+※GitHub上のすべてのデータがクローンされてしまうため、不要なファイルを消す操作が必要<br>
+7. データベース、wp-config.phpはリポジトリに含まれていないので別途設置
+
 
 ## 注意点
 ・docker-compose.ymlではローカルをマウントしない方が良い。（なんかうまくいかない）<br>
@@ -125,31 +106,3 @@ www-data:www-data
 ・.htaccessの名前を変えて無効化する
 ・wp-optionsテーブル（管理画面からも変更可）のサイトアドレスを変える
 
-<!-- ## phpmyadminに接続し設定を変更
-・wp-optionsのsiteurl,homeをhttp://localhost:3000/に変更 <br>
-・wordpressのユーザー名、パスワードを入手できない場合は、wp-usersのユーザー名とパスワード（ハッシュ化必要）を追加 <br>
-・wp-config.phpのデータベース名・ユーザー名・パスワードの設定を確認 -->
-
-
-## イメージとは
-```
-Dockerの文脈で言うと「コンテナイメージ」と言われ、コンテナを起動するために必要な一式が格納されているファイルのこと。通常はGitHub上にある公式データを参照する。独自に設定したい場合はdockerfileでイメージをつくる。
-・OSの基盤となるファイル（多くの場合Linux distribusion）
-・アプリケーションコード
-・実行に必要なライブラリ（言語）
-・実行設定ファイル（環境変数、ポート設定、ボリューム設定など）
-・メタデータ（Dockerfileの命令履歴など）
-```
-
-## dockerfileとは
-```
-イメージを作成するための設計図。
-```
-
-## docker composeとは
-```
-Docker Compose とは、複数コンテナのアプリケーションを定義・共有するために役立つように、開発されたツールです。Compose があれば、サービスを定義する YAML ファイルを作成し、コマンドを１つ実行するだけで、瞬時にすべて立ち上げたり、すべてを削除したりできます。
-```
-
-引用
-https://qiita.com/yuya_sega/items/0fb78b064a6d64fe0979
