@@ -1,0 +1,19 @@
+FROM php:8.0-apache
+
+# apt-get updateを実行してパッケージリストを更新し、vim、iputils-ping、iproute2をインストール。これにより、コンテナ内でテキストエディタ、pingコマンド、ネットワーク管理ツール、gitが使用できる
+
+RUN apt-get update -y \
+    && apt-get install -y vim iputils-ping iproute2 git
+
+# タイムゾーンを設定
+ENV TZ=Asia/Tokyo
+
+# 必要なパッケージをインストールし、タイムゾーンを設定
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+ && docker-php-ext-install zip \
+ && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+ && printf '[PHP]\ndate.timezone = "%s"\n', $TZ > /usr/local/etc/php/conf.d/tzone.ini
+
+COPY . /var/www/html/

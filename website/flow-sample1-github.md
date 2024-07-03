@@ -24,10 +24,13 @@
 ## (*)db_entrypointフォルダの中にインポートしたいSQLを入れる
 
 ## (**)Dockerfileの作成
-[概要、こちらをコピー](../docker//docker-file.md)
+[概要、WordPressのプロジェクトはこちらをコピー](../docker/docker-file.md)<br>
+[PHPのみのプロジェクトはこちらをコピー](../docker/php-Dockerfile)<br>
+適宜プロジェクトに合った修正
 
 ## (***)docker-compose.ymlを作成
-[こちらをコピー](../docker/docker-compose.yml)
+[こちらをコピー](../docker/docker-compose.yml)<br>
+適宜プロジェクトに合った修正
 
 ## (****).gitignoreを作成
 [こちらをコピー](../git/.gitignore)
@@ -39,34 +42,37 @@
 ```
 docker compose up -d
 ```
-3. 起動したらVSCodeを立ち上げ、リモートエクスプローラーからwordpressを選択
-1. http://localhost:3000にアクセスし、立ち上がりを確認
-1. WordPressのリンクがうまくいってない場合、WPにログインし、「パーマリンク」を変更せず設定だけ押すと直る
+3. 起動したらVSCodeを立ち上げ、左のタブにある「リモートエクスプローラー」から立ち上げたwordpressを選択
+1. http://localhost:3000　にアクセスし、立ち上がりを確認
+1. WordPressのページ内リンクがうまくいってない場合、WPにログインし、「パーマリンク」を変更せず設定だけ押すと直る
 
-## 編集が完了したら、GitHubにpush
+## 開発終了前の確認事項
+[こちらを参照](../wordpress/final.md)
+
+## 開発が完了したら、GitHubにpush
 1. VSCodeのターミナルを開く
 1. gitの初期化コマンドを入力
 ```
 git init
 ```
-3. GitHubにリポジトリを作成<br>
+3. GitHubの画面でリポジトリを作成<br>
 注意：privateになっていることを確認する
-3. 接続する
+3. リポジトリができたら、VSCodeでGitHubに接続する
 ```
 git remote add origin 接続コード(GitHubのリポジトリからコピー)
 ```
-5. SSHキーを生成
+5. VSCodeのコマンドでSSHキーを生成
 ```
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 6. キーファイルの保存場所、jパスフレーズの設定、パスフレーズの確認を求められる。デフォルトのままでよい場合はエンターキーを押す（３回）
-6. 以下のコマンドを入力し、公開鍵を表示
+6. SSHキーが作成されたので、以下のコマンドを入力し、公開鍵を表示
 ```
 cat /root/.ssh/id_ed25519.pub
 ```
-8. GitHubのアカウント全体のSettings画面に移動し、「SSH and GPG keys」を選択
-8. 「New SSH key」から任意のタイトルと、さきほどの公開鍵をコピーし登録
-8. pushする
+8. GitHubの画面で、アカウント全体のSettings画面に移動し、「SSH and GPG keys」を選択
+8. 「New SSH key」から任意のタイトルを入力、さきほどの公開鍵をコピーし登録
+8. SSH接続が完了したので、VSCodeに戻り、pushする
 8. gitの詳しい操作方法については[こちらを参照](../git/git_command.md)
 
 ## GitHub上に置いてはいけないデータについて
@@ -75,7 +81,7 @@ cat /root/.ssh/id_ed25519.pub
 ※GitHubに機密情報は載せてはいけないため。<br>
 ※上記の.gitignore内ではアップロードしないように指定済
 
-## GitHubを確認
+## GitHubでリポジトリを確認
 privateになっているか等確認
 
 ## サーバー側からGitHubに接続しクローンする
@@ -99,9 +105,18 @@ git clone git@github.com:ユーザー名/リポジトリ名.git .
 
 ## 開発が終わったら
 ・開発が終わってコンテナを消すときは、コンテナの他に「images」「volumes」からも関連の名前のものを消す <br>
-・WordPressログイン情報等変更があれば報告<br>
+・WordPressログイン情報等変更があればパスワード管理者に報告<br>
 ・ローカルにもバックアップをとっておく<br>
+・SSH接続をOFFにし、公開鍵、秘密鍵を破棄
 
+## 目論見
+1. プロジェクトの過去の履歴が分かる
+1. 1により、作業者が変わった時の引き継ぎストレスを軽減
+1. バックアップの作成（GitHubでは不足。別途方法を考える）
+1. 上記が達成されなければフローを見直す
+
+## 懸念点と対策
+* SSH鍵の管理が難しそう…
 
 ## うまくいかない時
 ・docker-compose.ymlではローカルをマウントしない方が良い。（なんかうまくいかない）<br>
