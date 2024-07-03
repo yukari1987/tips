@@ -24,10 +24,10 @@
 ## (*)db_entrypointフォルダの中にインポートしたいSQLを入れる
 
 ## (**)Dockerfileの作成
-[概要、こちらをコピー](./docker-file.md)
+[概要、こちらをコピー](../docker//docker-file.md)
 
 ## (***)docker-compose.ymlを作成
-[こちらをコピー](./docker-compose.yml)
+[こちらをコピー](../docker/docker-compose.yml)
 
 ## (****).gitignoreを作成
 [こちらをコピー](../git/.gitignore)
