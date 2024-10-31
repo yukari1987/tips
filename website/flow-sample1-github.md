@@ -43,6 +43,13 @@
 docker compose up -d
 ```
 3. 起動したらVSCodeを立ち上げ、左のタブにある「リモートエクスプローラー」から立ち上げたwordpressを選択
+3. 上のタブから「フォルダを開く」を選択し、var/www/htmlを開く
+3. VSCodeのエクスプローラにwpの一覧が表示されたら、「wp-config.php」を開く
+3. DB_NAME…docker-compose.ymlの「WORDPRESS_DB_NAME」のデータに変更
+3. DB_USER…docker-compose.ymlの「WORDPRESS_DB_USER」のデータに変更
+3. DB_PASSWORD…docker-compose.ymlの「WORDPRESS_DB_PASSWORD」のデータに変更
+3. DB_HOST…docker-compose.ymlの「WORDPRESS_DB_HOST」のデータに変更
+3. ブラウザからMySQL(http://localhost:4000)にアクセスし、DBのwp-optionsのoption_id 1と2のoption_valueを「http://localhost:3000」に変更
 1. http://localhost:3000　にアクセスし、立ち上がりを確認
 1. WordPressのページ内リンクがうまくいってない場合、WPにログインし、「パーマリンク」を変更せず設定だけ押すと直る
 

@@ -1,56 +1,107 @@
-# Dockerでwordpressを立ち上げたい場合のテンプレート
+# ver1.0 2024.08.28 y
+# Dockerでwordpressを立ち上げたい場合のテンプレート。
+# カスタマイズしない場合は、.envとDockerfileも同じディレクトリに配置する。
 
-version: "3.7"
+#versionはDocker-composeの書き方のバージョン
+version: "3.8"
+#servicesはコンテナの情報、定義
 services:
+  #mysqlというコンテナを定義
   mysql:
+    # コンテナの名前を明示したい場合は以下のコメントアウトを外す。重複するとエラーになるので注意
     # container_name: mysql
-    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
+
+    #imageはイメージを指定。基本的にはDockerHub上のパッケージを利用。
     image: mysql:5.7
+
+    #volumesはマウントする場所を定義
     volumes:
       - mysql:/var/lib/mysql
+
+      # 仮想的なvolumeではなく物理的なファイルで情報を残したい場合は以下のコメントアウトを外す。wsl内に領域を指定しないと動作が激重になる
       # - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\db:/var/lib/mysql
-      # 仮想的なvolumeではなく物理的なファイルで情報を残したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
+
+      #sqlのインポート
       - ./db_entrypoint:/docker-entrypoint-initdb.d
-      # mysqlの初期値をimportしたい場合はコメントアウトを外す
+
+    # #environmentは環境変数の定義
     environment:
-      MYSQL_ROOT_PASSWORD: パスワード
-      MYSQL_DATABASE: データベース名
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+
+  #wordpressというコンテナを定義
   wordpress:
-    # container_name: wordpress
     # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
-    build: ./
+    # container_name: wordpress
+
+    #imageをDockerHubから引用する場合は以下のコメントアウトを外し、buildをコメントアウトする。
     # image: wordpress:latest
+
+    #buildはDockerfileから独自のイメージをビルドしたい時に、Dockerfileへのパスを指定。Dockerfileとはbuildするための手順を書いたファイルで、PHPのバージョンなど細かい設定をしたい時などに利用する。
+    build:
+      context: .
+      #argsは.envの情報をビルド用に定義
+      args:
+        - PROJECT_NAME=${PROJECT_NAME}
+        - DB_NAME=${DB_NAME}
+        - DB_PASSWORD=${DB_PASSWORD}
+        - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
+        - WORDPRESS_DB_USER=${WORDPRESS_DB_USER}
+
+    #volumesはマウントする場所を定義
     volumes:
-      - ./:/var/www/html
+      - wordpress:/var/www/html
+    # ファイルを編集したい場合は以下のコメントアウトを外す。wsl内に領域を指定しないと動作が激重になる
     #   - \\wsl.localhost\Ubuntu-22.04\home\ユーザー名\docker\wp:/var/www/html/wp-content
-    # ファイルを編集したい場合はコメントアウトを外す wsl内に領域を指定しないと動作が激重になる
+
+    #depends_onは依存先のservicesを示す。これを書いておくと依存先から読み込むため、エラーを防げる。
     depends_on:
       - mysql
+
+    #portsはportを指定
     ports:
       - 3000:80
+
+    #environmentは環境変数の定義
     environment:
-      WORDPRESS_DB_NAME: ワードプレスのデータベース名
-      WORDPRESS_DB_HOST: mysql:3306
-      WORDPRESS_DB_USER: root
-      WORDPRESS_DB_PASSWORD: ワードプレスのデータベースパスワード
+      WORDPRESS_DB_NAME: ${DB_NAME}
+      WORDPRESS_DB_HOST: ${WORDPRESS_DB_HOST}
+      WORDPRESS_DB_USER: ${WORDPRESS_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+
+  #phpmyadminというコンテナを定義
   phpmyadmin:
+    # コンテナの名前を明示したい場合は以下のコメントアウトを外す。重複するとエラーになるので注意
     # container_name: phpmyadmin
-    # コンテナの名前を明示したい場合はコメントアウトを外す。重複するとエラーになるので注意
+
+    #imageはイメージを指定。基本的にはDockerHub上のパッケージを利用。
     image: phpmyadmin:latest
+
+    #depends_onは依存先のservicesを示す。これを書いておくと依存先から読み込むため、エラーを防げる。
     depends_on:
       - mysql
+
+    #portsはportを指定
     ports:
       - 4000:80
+
+    #environmentは環境変数の定義
     environment:
       PMA_HOST: mysql
-      PMA_USER: root
-      PMA_PASSWORD: phpmyadminのパスワード
+      PMA_USER: ${WORDPRESS_DB_USER}
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       # インポートするSQLのファイルサイズが大きい場合、コメントアウトを外す
       # MEMORY_LIMIT: 128M
       # UPLOAD_LIMIT: 64M
+
+#このvolumesはdocker-compose.ymlで使用するボリュームを定義し、services間のデータ共有、コンテナが削除されてもデータを保持する
+
 volumes:
-  mysql:
-  wordpress:
+  mysql:    # これがボリューム名（Compose内部での参照名）
+    # name: ${PROJECT_NAME}_mysql    # これが実際の名前（Docker Engine上での名前）
+  wordpress:    # これがボリューム名（Compose内部での参照名）
+    # name: ${PROJECT_NAME}_wordpress    # これが実際の名前（Docker Engine上での名前）
+
 # 新規に作るのではなく環境をコピーする場合以下の内いずれかを実行する
 # docker compose exec wordpress bash -c "chown -R www-data:www-data /var/www/html"
 # docker compose exec wordpress bash -c "chown -R www-data:www-data /var/www/html/wp-content/upgrade && chown -R www-data:www-data /var/www/html/wp-content/uploads && chown -R www-data:www-data /var/www/html/wp-content/plugins"

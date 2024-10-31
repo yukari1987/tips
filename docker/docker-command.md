@@ -69,3 +69,24 @@ Docker Compose とは、複数コンテナのアプリケーションを定義�
 
 引用
 https://qiita.com/yuya_sega/items/0fb78b064a6d64fe0979
+
+## Volumeをエクスポート
+```
+for volume in $(docker volume ls -q); do docker run --rm -v $volume:/source -v $(pwd):/backup alpine tar -czf /backup/$volume.tar.gz -C /source ./ done
+```
+これでDocker内のvolumeをtarファイルに保存できる
+
+## volume復元 未確認
+```
+# 特定のコンテナのボリュームを復元
+container_name="your_container_name"
+backup_dir="./volume_backups/${container_name}"
+
+# バックアップファイルごとに復元
+for backup in $backup_dir/*.tar.gz; do
+  volume_name=$(basename $backup .tar.gz)
+  echo "Restoring volume: $volume_name"
+  docker volume create $volume_name
+  docker run --rm -v $volume_name:/target -v $backup_dir:/backup alpine tar -xzf /backup/$(basename $backup) -C /target
+done
+```

@@ -1,0 +1,6 @@
+PROJECT_NAME=プロジェクト名（.tar.gz）
+DB_NAME=データベース名
+DB_PASSWORD=データベースパスワード
+MYSQL_ROOT_PASSWORD=MySQLのルートユーザのパスワード(ほとんどの場合データベースパスワードと同じ)
+WORDPRESS_DB_HOST=mysql:3306
+WORDPRESS_DB_USER=root

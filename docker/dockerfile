@@ -1,0 +1,89 @@
+# ver1.0 2024.08.28 y
+# FROMはイメージの指定。基本的にはDockerHubから
+FROM php:7.4-apache
+
+# ARGを使用して.envの値を受け取る
+ARG PROJECT_NAME
+ARG DB_NAME
+ARG DB_PASSWORD
+ARG WORDPRESS_DB_HOST
+ARG WORDPRESS_DB_USER
+
+# ENVを使用して環境変数を設定
+ENV PROJECT_NAME=$PROJECT_NAME
+ENV DB_NAME=$DB_NAME
+ENV DB_PASSWORD=$DB_PASSWORD
+ENV WORDPRESS_DB_HOST=$WORDPRESS_DB_HOST
+ENV WORDPRESS_DB_USER=$WORDPRESS_DB_USER
+
+# RUNは実行コマンド
+## アップデートとパッケージのインストールを連ねて書いている
+RUN apt-get update -y \
+    && apt-get install -y vim iputils-ping iproute2 \
+    libfreetype6-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
+    libonig-dev \
+    libzip-dev \
+    libmcrypt-dev
+
+## mysqliをインストール
+RUN docker-php-ext-install pdo_mysql mysqli gd zip
+
+## 以下ではコマンドのエイリアス設定、php.ini作成、Xdebugの設定
+RUN echo 'alias ll="ls -la"' >> ~/.bashrc
+RUN touch /usr/local/etc/php/php.ini
+RUN echo "[xdebug]\n \
+xdebug.mode=debug\n \
+xdebug.client_host=host.docker.internal\n \
+xdebug.start_with_request=yes\n \
+xdebug.client_port=9003" >> /usr/local/etc/php/php.ini
+RUN pecl install xdebug-3.1.6 \
+    && docker-php-ext-enable xdebug
+
+# Apache の設定
+RUN a2enmod rewrite
+
+# WordPressファイルの展開
+ADD ./wp_entrypoint/${PROJECT_NAME}.tar.gz /var/www/html/
+RUN cat /var/www/html/wp-config.php
+
+# suitguardプラグインを使用している場合、必要なパッケージをインストール
+#############
+# ここから
+#############
+# RUN apt-get update && apt-get install -y \
+#     libfreetype6-dev \
+#     libjpeg62-turbo-dev \
+#     libpng-dev \
+#     libzip-dev
+
+# # GDライブラリを設定し、FreeTypeサポートを有効にする
+# RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+
+# # GDライブラリをインストール
+# RUN docker-php-ext-install -j$(nproc) gd
+#############
+# ここまで
+#############
+
+# wp-config.php を.envを参照し上書き
+RUN set -ex; \
+    echo "Updating wp-config.php"; \
+    sed -i "s/define( *'DB_NAME', *'[^']*' *);/define( 'DB_NAME', '${DB_NAME}' );/" /var/www/html/wp-config.php; \
+    sed -i "s/define( *'DB_USER', *'[^']*' *);/define( 'DB_USER', '${WORDPRESS_DB_USER}' );/" /var/www/html/wp-config.php; \
+    sed -i "s/define( *'DB_PASSWORD', *'[^']*' *);/define( 'DB_PASSWORD', '${DB_PASSWORD}' );/" /var/www/html/wp-config.php; \
+    sed -i "s/define( *'DB_HOST', *'[^']*' *);/define( 'DB_HOST', '${WORDPRESS_DB_HOST}' );/" /var/www/html/wp-config.php; \
+    echo "wp-config.php updated";
+
+
+# 機密情報のクリーンアップ
+ENV PROJECT_NAME=
+ENV DB_NAME=
+ENV DB_PASSWORD=
+ENV WORDPRESS_DB_HOST=
+ENV WORDPRESS_DB_USER=
+
+# 権限の設定
+# RUN chown -R www-data:www-data /var/www/html
+# RUN chmod -R 755 /var/www/html
